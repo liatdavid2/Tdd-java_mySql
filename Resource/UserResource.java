@@ -3,6 +3,8 @@ package com.group.db.springbootmysql.Resource;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,7 +54,7 @@ public class UserResource {
 	//url:http://localhost:7000/rest/users/add
 	//body:{"name":"hfghf4324325","id":777888} - replace id- id is auto increment -don't take user id
 	@PostMapping(value="/add")
-	public GenericResponse AddUser(@RequestBody User _user)
+	public GenericResponse AddUser(@Valid @RequestBody User _user)
 	{
 		System.out.println(_user.getID()+ _user.getName());
 		BCryptPasswordEncoder PasswordEncoder = new BCryptPasswordEncoder();
