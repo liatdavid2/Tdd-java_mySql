@@ -34,23 +34,7 @@ public class UserResource {
 	public List<User>getAll()
 	{
 		return UserRepository.findAll();
-	}
-	
-	//url: http://localhost:7000/rest/users/user?Id=3
-	@GetMapping(value="/user")
-	public Optional<User>  getById(@RequestParam int Id)
-	{
-		return UserRepository.findById(Id);
-	}
-	//url:http://localhost:7000/rest/users/add
-		//body:{"name":"hfghf4324325","id":777888} - replace id- id is auto increment -don't take user id
-	@PostMapping(value="/save")
-	public int SaveUser(@RequestBody User _user)
-	{
-		System.out.println(_user.getID()+ _user.getName());
-		UserRepository.save(_user);	
-		return _user.getID();
-	}
+	}	
 	//url:http://localhost:7000/rest/users/add
 	//body:{"name":"hfghf4324325","id":777888} - replace id- id is auto increment -don't take user id
 	@PostMapping(value="/add")
@@ -62,22 +46,5 @@ public class UserResource {
 		UserRepository.save(_user);	
 		return new GenericResponse("user saved");
 	}
-	//url:http://localhost:7000/rest/users/delete
-	//body:    { "name": "hfghf7777", "id": 4}
-	@DeleteMapping(value="/delete")
-	public List<User>DeleteUser(@RequestBody User _user)
-	{
-		UserRepository.delete(_user);		
-		return UserRepository.findAll();
-	}
-	//if user id doesn't exist's then create user - take user id
-	//url:http://localhost:7000/rest/users/update
-	//body:{"name":"2222222","id":2}
-	@PutMapping(value="/update")
-	public List<User>updateUser(@RequestBody User _user)
-	{
-		
-		UserRepository.save(_user);		
-		return UserRepository.findAll();
-	}
+
 }
