@@ -19,13 +19,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.group.db.springbootmysql.model.User;
 import com.group.db.springbootmysql.shared.GenericResponse;
 import com.group.db.springbootmysql.SpringBootMysqlApplication;
+import com.group.db.springbootmysql.error.ApiError;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT
 ,classes = SpringBootMysqlApplication.class)
 @ActiveProfiles("test")
 public class UserControllerTest {
 	
-	private static final String REST_1_0_USERS = "http://localhost:7000/rest/1.0/users/";
+	private static final String REST_1_0_USERS = "/rest/1.0/users/";
 	@Autowired
 	TestRestTemplate testRestTemplate;
 	
@@ -50,24 +51,12 @@ public class UserControllerTest {
 		assertThat(res.getBody().getMessage()).isNotNull();
 	}
 	
-
-	private User createValidUser() {
-		User user = new User();
-		user.setID(2);
-		user.setName("test-user");
-		user.setPassword("P4ssword");
-		return user;
-	}
 	
 	@Test
 	public void GetAllUsers_receiveOk() {
 		ResponseEntity<Object> res = testRestTemplate
 				.getForEntity(REST_1_0_USERS +"all", Object.class);		
 		assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
-
-	public <T> ResponseEntity<T> postSignUp(Object requset,Class<T>response){
-		return testRestTemplate.postForEntity(REST_1_0_USERS+"add", requset, response);
 	}
 	
 	@Test
@@ -142,6 +131,7 @@ public class UserControllerTest {
 		System.out.println(res.getStatusCode());
 		assertThat(res.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
+	
 	@Test
 	public void postUser_whenUserHasPasswordWithAllDigits_receiveBadRequest() {
 		User user = createValidUser();
@@ -149,5 +139,24 @@ public class UserControllerTest {
 		ResponseEntity<Object> res = postSignUp(user,Object.class);
 		System.out.println(res.getStatusCode());
 		assertThat(res.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+	
+	@Test
+	public void postUser_whenUserIsInvalid_getApiErrorWithValidationErrors() {
+		User user = new User();
+		ResponseEntity<ApiError> res = postSignUp(user,ApiError.class);
+		System.out.println(res.getBody().getValidationErrors());
+		assertThat(res.getBody().getValidationErrors().size()).isEqualTo(2);
+	}
+	private User createValidUser() {
+		User user = new User();
+		user.setID(2);
+		user.setName("test-user");
+		user.setPassword("P4ssword");
+		return user;
+	}
+	public <T> ResponseEntity<T> postSignUp(Object requset,Class<T>response){
+		System.out.println(testRestTemplate.postForEntity(REST_1_0_USERS+"add", requset, response));
+		return testRestTemplate.postForEntity(REST_1_0_USERS+"add", requset, response);
 	}
 }
